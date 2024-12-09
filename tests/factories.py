@@ -57,7 +57,7 @@ class ProductFactory(factory.Factory):
     ])
 
     @classmethod
-    def create_batch(cls, size: int):
+    def create_batch(cls, size: int, **kwargs):
         for _ in range(0, size):
             product = ProductFactory()
             product.id = None
