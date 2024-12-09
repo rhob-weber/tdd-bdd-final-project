@@ -28,7 +28,7 @@ import logging
 import unittest
 import json
 from decimal import Decimal
-from service.models import Product, Category, db
+from service.models import Product, Category, db, DataValidationError
 from service import app
 from tests.factories import ProductFactory
 
@@ -246,3 +246,21 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(original_product.description, deserialized_product.description)
         self.assertEqual(original_product.category, deserialized_product.category)
         self.assertEqual(original_product.price, deserialized_product.price)
+
+    def test_update_with_no_id(self):
+        """It should not be possible to update an object with no id to the database"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+        products = Product.all()
+        product = products[0]
+        self.assertIsNotNone(product.id)
+        actual_err = None
+        try:
+            product.id = None
+            product.update()
+        except BaseException as err:
+            actual_err = err
+        self.assertIsNotNone(actual_err)
+        self.assertTrue(isinstance(actual_err, DataValidationError))
+        self.assertEqual(str(actual_err), "Update called with empty ID field")
