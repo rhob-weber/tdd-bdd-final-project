@@ -230,6 +230,24 @@ class TestProductModel(unittest.TestCase):
         for product in found_products:
             self.assertEqual(product.price, search_product.price)
 
+    def test_find_product_by_string_price(self):
+        """It should find a product by a price string with trailing whitespace in the database"""
+        products = Product.all()
+        self.assertEqual(products, [])
+        ProductFactory.create_batch(10)
+        products = Product.all()
+        self.assertEqual(len(products), 10)
+        search_product = products[0]
+        expected_num_products = 0
+        for product in products:
+            if product.price == search_product.price:
+                expected_num_products += 1
+        self.assertNotEqual(expected_num_products, 0)
+        found_products = Product.find_by_price(str(search_product.price) + " ")
+        self.assertEqual(found_products.count(), expected_num_products)
+        for product in found_products:
+            self.assertEqual(product.price, search_product.price)
+
     def test_serialize_and_deserialize(self):
         """It should be possible to serialize and deserialize an object"""
         product = ProductFactory()
@@ -266,7 +284,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(str(actual_err), "Update called with empty ID field")
 
     def test_deserialize_available_not_bool(self):
-        """It should not be possible to deserialize an object with a non-bool available"""
+        """It should not be possible to deserialize a dictionary with a non-bool available"""
         product = ProductFactory()
         product.id = None
         product.create()
@@ -282,4 +300,63 @@ class TestProductModel(unittest.TestCase):
         except BaseException as err:
             actual_err = err
         self.assertIsNotNone(actual_err)
+        self.assertTrue(isinstance(actual_err, DataValidationError))
         self.assertEqual(str(actual_err), "Invalid type for boolean [available]: <class 'str'>")
+
+    def test_deserialize_category_not_valid(self):
+        """It should not be possible to deserialize a dictionary with an invalid category"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+        products = Product.all()
+        original_product = products[0]
+        self.assertIsNotNone(original_product.category)
+        serialized_product = original_product.serialize()
+        serialized_product["category"] = "Not a category I have heard of"
+        blank_product = Product()
+        actual_err = None
+        try:
+            deserialized_product = blank_product.deserialize( serialized_product )
+        except BaseException as err:
+            actual_err = err
+        self.assertIsNotNone(actual_err)
+        self.assertTrue(isinstance(actual_err, DataValidationError))
+        self.assertEqual(str(actual_err), "Invalid attribute: Not a category I have heard of")
+
+    def test_deserialize_empty_dictionary(self):
+        """It should not be possible to deserialize an empty dictionary"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+        products = Product.all()
+        original_product = products[0]
+        self.assertIsNotNone(original_product.category)
+        serialized_product = {}
+        blank_product = Product()
+        actual_err = None
+        try:
+            deserialized_product = blank_product.deserialize( serialized_product )
+        except BaseException as err:
+            actual_err = err
+        self.assertIsNotNone(actual_err)
+        self.assertTrue(isinstance(actual_err, DataValidationError))
+        self.assertEqual(str(actual_err), "Invalid product: missing id")
+
+    def test_deserialize_invalid_dictionary(self):
+        """It should not be possible to deserialize an invalid dictionary"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+        products = Product.all()
+        original_product = products[0]
+        self.assertIsNotNone(original_product.category)
+        serialized_product = "Not a dictionary"
+        blank_product = Product()
+        actual_err = None
+        try:
+            deserialized_product = blank_product.deserialize( serialized_product )
+        except BaseException as err:
+            actual_err = err
+        self.assertIsNotNone(actual_err)
+        self.assertTrue(isinstance(actual_err, DataValidationError))
+        self.assertEqual(str(actual_err), "Invalid product: body of request contained bad or no data string indices must be integers")
