@@ -229,3 +229,20 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found_products.count(), expected_num_products)
         for product in found_products:
             self.assertEqual(product.price, search_product.price)
+
+    def test_serialize_and_deserialize(self):
+        """It should be possible to serialize and deserialize an object"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+        products = Product.all()
+        original_product = products[0]
+        self.assertIsNotNone(original_product.id)
+        serialized_product = original_product.serialize()
+        blank_product = Product()
+        deserialized_product = blank_product.deserialize( serialized_product )
+        self.assertEqual(original_product.id, deserialized_product.id)
+        self.assertEqual(original_product.name, deserialized_product.name)
+        self.assertEqual(original_product.description, deserialized_product.description)
+        self.assertEqual(original_product.category, deserialized_product.category)
+        self.assertEqual(original_product.price, deserialized_product.price)
