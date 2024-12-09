@@ -264,3 +264,22 @@ class TestProductModel(unittest.TestCase):
         self.assertIsNotNone(actual_err)
         self.assertTrue(isinstance(actual_err, DataValidationError))
         self.assertEqual(str(actual_err), "Update called with empty ID field")
+
+    def test_deserialize_available_not_bool(self):
+        """It should not be possible to deserialize an object with a non-bool available"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+        products = Product.all()
+        original_product = products[0]
+        self.assertIsNotNone(original_product.available)
+        serialized_product = original_product.serialize()
+        serialized_product["available"] = "Not a bool"
+        blank_product = Product()
+        actual_err = None
+        try:
+            deserialized_product = blank_product.deserialize( serialized_product )
+        except BaseException as err:
+            actual_err = err
+        self.assertIsNotNone(actual_err)
+        self.assertEqual(str(actual_err), "Invalid type for boolean [available]: <class 'str'>")
