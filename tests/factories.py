@@ -56,9 +56,9 @@ class ProductFactory(factory.Factory):
         Category.TOOLS,
     ])
 
-    # @classmethod
-    # def create_batch(cls, size: int):
-    #     for _ in range(0, size):
-    #         product = ProductFactory()
-    #         product.id = None
-    #         product.create()
+    @classmethod
+    def create_batch(cls, size: int):
+        for _ in range(0, size):
+            product = ProductFactory()
+            product.id = None
+            product.create()

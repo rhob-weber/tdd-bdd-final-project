@@ -112,7 +112,7 @@ class TestProductModel(unittest.TestCase):
         product.id = None
         product.create()
         self.assertIsNotNone(product.id)
-        new_product = Product.read(product.id)
+        new_product = Product.find(product.id)
         self.assertEqual(new_product.name, product.name)
         self.assertEqual(new_product.description, product.description)
         self.assertEqual(Decimal(new_product.price), product.price)
@@ -130,7 +130,7 @@ class TestProductModel(unittest.TestCase):
         logger.info('Old product is: %s', json.dumps(product.serialize()))
         product.update()
         products = Product.all()
-        new_product = Product.read(product.id)
+        new_product = Product.find(product.id)
         self.assertEqual(new_product.name, product.name)
         self.assertEqual(new_product.description, product.description)
         self.assertEqual(Decimal(new_product.price), product.price)
