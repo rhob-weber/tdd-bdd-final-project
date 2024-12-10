@@ -20,7 +20,7 @@ Product Store Service with UI
 """
 from flask import jsonify, request, abort
 from flask import url_for  # noqa: F401 pylint: disable=unused-import
-from service.models import Product
+from service.models import Product, DataValidationError
 from service.common import status  # HTTP Status Codes
 from . import app
 
@@ -124,13 +124,39 @@ def get_products(product_id):
 
     return jsonify(message), status_code, {"Location": location_url}
 
+
 ######################################################################
 # U P D A T E   A   P R O D U C T
 ######################################################################
+@app.route("/products/<int:product_id>", methods=["PUT"])
+def put_products(product_id):
+    """
+    Update a Product
+    This endpoint will update the Product with the requested id
+    """
+    app.logger.info("Request to Update a Product...")
+    app.logger.info("Processing: %s", product_id)
 
-#
-# PLACE YOUR CODE TO UPDATE A PRODUCT HERE
-#
+    check_content_type("application/json")
+    data = request.get_json()
+    app.logger.info("Processing: %s", data)
+    product = Product()
+    error_message = None
+    try:
+        product.deserialize(data)
+    except DataValidationError as err:
+        error_message = str(err)
+
+    if error_message is None:
+        status_code = status.HTTP_200_OK
+        message = product.serialize()
+    else:
+        status_code = status.HTTP_404_NOT_FOUND
+        message = {"error": error_message}
+
+    location_url = url_for("put_products", product_id=product_id, _external=True)
+
+    return jsonify(message), status_code, {"Location": location_url}
 
 ######################################################################
 # D E L E T E   A   P R O D U C T

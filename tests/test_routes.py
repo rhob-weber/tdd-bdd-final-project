@@ -92,6 +92,16 @@ class TestProductRoutes(TestCase):
             products.append(test_product)
         return products
 
+    def _get_product(self, product_id: int) -> dict:
+        """Utility method to get a product"""
+        request_url = f"{BASE_URL}/{product_id}"
+        response = self.client.get(request_url)
+        if response.status_code == status.HTTP_200_OK:
+            result = response.get_json()
+        else:
+            result = None
+        return result
+
     ############################################################
     #  T E S T   C A S E S
     ############################################################
@@ -159,9 +169,6 @@ class TestProductRoutes(TestCase):
         response = self.client.post(BASE_URL, data={}, content_type="plain/text")
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    #
-    # ADD YOUR TEST CASES HERE
-    #
     def test_get_product(self):
         """It should read Product"""
         test_product = self._create_products()[0]
@@ -187,6 +194,29 @@ class TestProductRoutes(TestCase):
         got_product = response.get_json()
         logging.debug("Product got: %s", got_product)
         self.assertEqual(got_product, {})
+
+    def test_update_product(self):
+        """It should update a Product"""
+        test_product = self._create_products()[0]
+        request_url = f"{BASE_URL}/{test_product.id}"
+        updated_product = test_product.serialize()
+        new_description = "Updated description"
+        updated_product["description"] = new_description
+        # logging.debug("Querying: %s", request_url)
+        response = self.client.put(request_url, json=updated_product)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        got_product = self._get_product(test_product.id)
+        logging.debug("Product got: %s", got_product)
+        self.assertEqual(got_product["name"], test_product.name)
+        self.assertEqual(got_product["description"], new_description)
+        self.assertEqual(Decimal(got_product["price"]), test_product.price)
+        self.assertEqual(got_product["available"], test_product.available)
+        self.assertEqual(got_product["category"], test_product.category.name)
 
     ######################################################################
     # Utility functions
