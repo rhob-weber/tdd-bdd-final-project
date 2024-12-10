@@ -114,7 +114,7 @@ def list_products():
         except KeyError:
             abort(status.HTTP_400_BAD_REQUEST, f"Invalid category: {search_category}")
         products = Product.find_by_category(category_value)
-    elif search_available:
+    elif search_available or search_available == "":
         available_value = search_available.lower() in ["true", "yes", "1", ""]
         products = Product.find_by_availability(available_value)
     else:
