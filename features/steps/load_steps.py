@@ -18,7 +18,6 @@
 Product Steps
 
 Steps file for products.feature
-
 For information on Waiting until elements are present in the HTML see:
     https://selenium-python.readthedocs.io/waits.html
 """
@@ -49,10 +48,10 @@ def step_impl(context):
     for row in context.table:
         payload = {
             "name": row["name"],
-            "description": row["description"]
+            "description": row["description"],
             "price": row["price"],
-            "category": row["category"]
-            "available": row["available"] in ['True', 'true', '1']
+            "category": row["category"],
+            "available": row["available"] in ['True', 'true', '1'],
         }
         response = self.client.post(rest_endpoint, json=payload)
-        assert(response.status_code, status.HTTP_201_CREATED, "Could not create test product")
+        assert(response.status_code == status.HTTP_201_CREATED)
