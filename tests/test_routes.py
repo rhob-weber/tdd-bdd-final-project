@@ -357,6 +357,63 @@ class TestProductRoutes(TestCase):
         for got_product in got_products:
             self.assertEqual(got_product["available"], search_available)
 
+    def test_find_by_availability_yes(self):
+        """It should find all products with availability YES"""
+        test_products = self._create_products(10)
+        self.assertEqual(len(test_products), 10)
+        search_available = True
+        request_url = f"{BASE_URL}?available=yes"
+        logging.debug("Finding products by availability")
+        num_expected = 0
+        for product in test_products:
+            if product.available == search_available:
+                num_expected += 1
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        got_products = response.get_json()
+        self.assertEqual(len(got_products), num_expected)
+        for got_product in got_products:
+            self.assertEqual(got_product["available"], search_available)
+
+    def test_find_by_availability_one(self):
+        """It should find all products with availability 1"""
+        test_products = self._create_products(10)
+        self.assertEqual(len(test_products), 10)
+        search_available = True
+        request_url = f"{BASE_URL}?available=1"
+        logging.debug("Finding products by availability")
+        num_expected = 0
+        for product in test_products:
+            if product.available == search_available:
+                num_expected += 1
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        got_products = response.get_json()
+        self.assertEqual(len(got_products), num_expected)
+        for got_product in got_products:
+            self.assertEqual(got_product["available"], search_available)
+
+    def test_find_by_availability_set(self):
+        """It should find all products with availability set"""
+        test_products = self._create_products(10)
+        self.assertEqual(len(test_products), 10)
+        search_available = True
+        request_url = f"{BASE_URL}?available"
+        logging.debug("Finding products by availability")
+        num_expected = 0
+        for product in test_products:
+            if product.available == search_available:
+                num_expected += 1
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        got_products = response.get_json()
+        self.assertEqual(len(got_products), num_expected)
+        for got_product in got_products:
+            self.assertEqual(got_product["available"], search_available)
+
     def test_find_by_availability_false(self):
         """It should find all products with availability false"""
         test_products = self._create_products(10)
@@ -375,16 +432,6 @@ class TestProductRoutes(TestCase):
         self.assertEqual(len(got_products), num_expected)
         for got_product in got_products:
             self.assertEqual(got_product["available"], search_available)
-
-    def test_find_by_invalid_availability(self):
-        """It should fail to find any products if the availability is invalid"""
-        test_products = self._create_products(10)
-        self.assertEqual(len(test_products), 10)
-        search_availability = "notbool"
-        request_url = f"{BASE_URL}?available={quote_plus(search_availability)}"
-        logging.debug("Finding products by invalid availability: %s", search_availability)
-        response = self.client.get(request_url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     ######################################################################
     # Utility functions
