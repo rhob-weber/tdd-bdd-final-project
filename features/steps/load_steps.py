@@ -47,41 +47,12 @@ def step_impl(context):
     # load the database with new products
     #
     for row in context.table:
-        # | name       | description     | price   | available | category   |
-        # | Hat        | A red fedora    | 59.95   | True      | CLOTHS     |
-        # | Shoes      | Blue shoes      | 120.50  | False     | CLOTHS     |
-        # | Big Mac    | 1/4 lb burger   | 5.99    | True      | FOOD       |
-        # | Sheets     | Full bed sheets | 87.00   | True      | HOUSEWARES |
-        products = [
-            {
-                "name": "Hat",
-                "description": "A red fedora",
-                "price": 59.95,
-                "available": True,
-                "category": Category.CLOTHS,
-            },
-            {
-                "name": "Shoes",
-                "description": "Blue shoes",
-                "price": 120.50.
-                "available": False,
-                "category": Category.CLOTHS,
-            },
-            {
-                "name": "Big Mac",
-                "description": "1/4 lb burger",
-                "price": 5.99.
-                "available": True,
-                "category": Category.FOOD,
-            },
-            {
-                "name": "Sheets",
-                "description": "Full bed sheets",
-                "price": 87.00.
-                "available": True,
-                "category": Category.HOUSEWARES,
-            },
-        ]
-        #
-        # ADD YOUR CODE HERE TO CREATE PRODUCTS VIA THE REST API
-        #
+        payload = {
+            "name": row["name"],
+            "description": row["description"]
+            "price": row["price"],
+            "category": row["category"]
+            "available": row["available"] in ['True', 'true', '1']
+        }
+        response = self.client.post(rest_endpoint, json=payload)
+        assert(response.status_code, status.HTTP_201_CREATED, "Could not create test product")
