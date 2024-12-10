@@ -117,10 +117,10 @@ def get_products(product_id):
     location_url = url_for("get_products", product_id=product.id, _external=True)
     if not product == None:
         status_code = status.HTTP_200_OK
-        message = {}
+        message = product.serialize()
     else:
         status_code = status.HTTP_404_NOT_FOUND
-        message = product.serialize()
+        message = {}
 
     return jsonify(message), status_code, {"Location": location_url}
 
