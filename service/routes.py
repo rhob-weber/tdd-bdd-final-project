@@ -105,6 +105,7 @@ def list_products():
     app.logger.info("Request to Get Products...")
     search_name = request.args.get("name")
     search_category = request.args.get("category")
+    search_available = request.args.get("available")
     if search_name is not None:
         products = Product.find_by_name(search_name)
     elif search_category is not None:
@@ -113,6 +114,14 @@ def list_products():
         except KeyError:
             abort(status.HTTP_400_BAD_REQUEST, f"Invalid category: {search_category}")
         products = Product.find_by_category(category_value)
+    elif search_available is not None:
+        if search_available.lower() == "true":
+            available_value = True
+        elif search_available.lower() == "false":
+            available_value = False
+        else:
+            abort(status.HTTP_400_BAD_REQUEST, f"Invalid availability: {search_available}")
+        products = Product.find_by_availability(available_value)
     else:
         products = Product.all()
 
