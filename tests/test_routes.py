@@ -309,6 +309,35 @@ class TestProductRoutes(TestCase):
         for got_product in got_products:
             self.assertEqual(got_product["name"], search_name)
 
+    def test_find_by_category(self):
+        """It should find all products with this category"""
+        test_products = self._create_products(10)
+        self.assertEqual(len(test_products), 10)
+        search_category = test_products[0].category
+        request_url = f"{BASE_URL}?category={quote_plus(search_category.name)}"
+        logging.debug("Finding products by category: %s", search_category.name)
+        num_expected = 0
+        for product in test_products:
+            if product.category == search_category:
+                num_expected += 1
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        got_products = response.get_json()
+        self.assertEqual(len(got_products), num_expected)
+        for got_product in got_products:
+            self.assertEqual(got_product["category"], search_category.name)
+
+    def test_find_by_invalid_category(self):
+        """It should fail to find any products if the category is invalid"""
+        test_products = self._create_products(10)
+        self.assertEqual(len(test_products), 10)
+        search_category_name = "never heard of it"
+        request_url = f"{BASE_URL}?category={quote_plus(search_category_name)}"
+        logging.debug("Finding products by invalid category: %s", search_category_name)
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     ######################################################################
     # Utility functions
     ######################################################################

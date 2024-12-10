@@ -20,7 +20,7 @@ Product Store Service with UI
 """
 from flask import jsonify, request, abort
 from flask import url_for  # noqa: F401 pylint: disable=unused-import
-from service.models import Product, DataValidationError
+from service.models import Product, Category, DataValidationError
 from service.common import status  # HTTP Status Codes
 from . import app
 
@@ -104,8 +104,15 @@ def list_products():
     """
     app.logger.info("Request to Get Products...")
     search_name = request.args.get("name")
+    search_category = request.args.get("category")
     if search_name is not None:
         products = Product.find_by_name(search_name)
+    elif search_category is not None:
+        try:
+            category_value = Category[search_category]
+        except KeyError:
+            abort(status.HTTP_400_BAD_REQUEST, f"Invalid category: {search_category}")
+        products = Product.find_by_category(category_value)
     else:
         products = Product.all()
 
