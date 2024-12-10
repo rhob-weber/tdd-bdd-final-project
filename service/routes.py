@@ -114,8 +114,8 @@ def get_products(product_id):
 
     app.logger.info("Processing: %s", product_id)
     product = Product.find(product_id)
-    location_url = url_for("get_products", product_id=product.id, _external=True)
-    if not product == None:
+    location_url = url_for("get_products", product_id=product_id, _external=True)
+    if product is None:
         status_code = status.HTTP_200_OK
         message = product.serialize()
     else:

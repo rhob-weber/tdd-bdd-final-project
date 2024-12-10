@@ -165,11 +165,8 @@ class TestProductRoutes(TestCase):
     def test_get_product(self):
         """It should read Product"""
         test_product = self._create_products()[0]
-        products = Product.all()
-        logging.debug("All products: %s", str(len(products)))
-        logging.debug("product 0: %s", str(products[0].serialize()))
         request_url = f"{BASE_URL}/{test_product.id}"
-        logging.debug("Querying: %s", request_url)
+        # logging.debug("Querying: %s", request_url)
         response = self.client.get(request_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         got_product = response.get_json()
@@ -179,6 +176,17 @@ class TestProductRoutes(TestCase):
         self.assertEqual(Decimal(got_product["price"]), test_product.price)
         self.assertEqual(got_product["available"], test_product.available)
         self.assertEqual(got_product["category"], test_product.category.name)
+
+    def test_get_product_not_found(self):
+        """It should handle an attempt to get an unknown id"""
+        test_product = self._create_products()[0]
+        request_url = f"{BASE_URL}/{test_product.id + 1}"
+        logging.debug("Querying: %s", request_url)
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        got_product = response.get_json()
+        logging.debug("Product got: %s", got_product)
+        self.assertEqual(got_product, {})
 
     ######################################################################
     # Utility functions
