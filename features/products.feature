@@ -98,3 +98,31 @@ Scenario: List all Products
     And I should see "Shoes" in the results
     And I should see "Big Mac" in the results
     And I should see "Sheets" in the results
+
+Scenario: Search by Category
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I select "Cloths" in the "Category" dropdown
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the results
+    And I should see "Shoes" in the results
+
+Scenario: Search by availability
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I set the "Availability" dropdown to "False"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Shoes" in the "Name" field
+    And I should see "Blue shoes" in the "Description" field
+
+Scenario: Search by name
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the "Name" field
+    And I should see "A red fedora" in the "Description" field
+nd 
