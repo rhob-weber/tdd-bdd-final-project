@@ -86,3 +86,15 @@ Scenario: Delete a Product
     And I press the "Retrieve" button
     Then I should see the message "Failed"
 
+Scenario: List all Products
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I set the "Price" field to "69.98"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the results
+    And I should see "Shoes" in the results
+    And I should see "Big Mac" in the results
+    And I should see "Sheets" in the results
