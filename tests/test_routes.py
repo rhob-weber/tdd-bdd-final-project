@@ -219,6 +219,54 @@ class TestProductRoutes(TestCase):
         self.assertEqual(got_product["available"], test_product.available)
         self.assertEqual(got_product["category"], test_product.category.name)
 
+    def test_update_product_with_invalid_data(self):
+        """It should not update a Product with invalid data"""
+        test_product = self._create_products()[0]
+        request_url = f"{BASE_URL}/{test_product.id}"
+        logging.debug("Updating: %s", test_product.id)
+        updated_product = test_product.serialize()
+        updated_product["available"] = "Not a boolean"
+        logging.debug("Querying: %s", request_url)
+        response = self.client.put(request_url, json=updated_product)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_product_not_found(self):
+        """It should not update a Product with an unknown id"""
+        test_product = self._create_products()[0]
+        unknown_product_id = test_product.id + 1
+        request_url = f"{BASE_URL}/{unknown_product_id}"
+        logging.debug("Updating: %s", unknown_product_id)
+        updated_product = test_product.serialize()
+        updated_product["id"] = unknown_product_id
+        logging.debug("Querying: %s", request_url)
+        response = self.client.put(request_url, json=updated_product)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_product(self):
+        """It should delete a Product"""
+        test_product = self._create_products()[0]
+        request_url = f"{BASE_URL}/{test_product.id}"
+        # logging.debug("Querying: %s", request_url)
+        # Verify that the product exists
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        got_product = response.get_json()
+        logging.debug("Product got: %s", got_product)
+        response = self.client.delete(request_url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # Verify that the product does not exist
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_product_not_found(self):
+        """It should not delete a Product that cannot be found"""
+        test_product = self._create_products()[0]
+        unknown_product_id = test_product.id + 1
+        request_url = f"{BASE_URL}/{unknown_product_id}"
+        response = self.client.delete(request_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+#
     ######################################################################
     # Utility functions
     ######################################################################

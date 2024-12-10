@@ -157,11 +157,26 @@ def update_products(product_id):
 
     return jsonify(message), status_code, {"Location": location_url}
 
+
 ######################################################################
 # D E L E T E   A   P R O D U C T
 ######################################################################
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_products(product_id):
+    """
+    Delete a Product
+    This endpoint will delete the Product with the requested id
+    """
+    app.logger.info("Request to Delete a Product...")
+    app.logger.info("Processing: DELETE %s", product_id)
 
+    product = Product.find(product_id)
+    if not product:
+        abort(status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found.")
 
-#
-# PLACE YOUR CODE TO DELETE A PRODUCT HERE
-#
+    product.delete()
+    status_code = status.HTTP_204_NO_CONTENT
+
+    location_url = url_for("delete_products", product_id=product_id, _external=True)
+
+    return "", status_code, {"Location": location_url}
