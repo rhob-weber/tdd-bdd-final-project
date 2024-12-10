@@ -129,7 +129,7 @@ def get_products(product_id):
 # U P D A T E   A   P R O D U C T
 ######################################################################
 @app.route("/products/<int:product_id>", methods=["PUT"])
-def put_products(product_id):
+def update_products(product_id):
     """
     Update a Product
     This endpoint will update the Product with the requested id
@@ -139,22 +139,21 @@ def put_products(product_id):
 
     check_content_type("application/json")
     data = request.get_json()
-    app.logger.info("Processing: %s", data)
-    product = Product()
-    error_message = None
+    app.logger.info("Processing PUT: %s", data)
+    product = Product.find(product_id)
+    if not product:
+        abort(status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found.")
+
     try:
         product.deserialize(data)
     except DataValidationError as err:
-        error_message = str(err)
+        abort(status.HTTP_400_BAD_REQUEST, str(err))
 
-    if error_message is None:
-        status_code = status.HTTP_200_OK
-        message = product.serialize()
-    else:
-        status_code = status.HTTP_404_NOT_FOUND
-        message = {"error": error_message}
+    product.update()
+    status_code = status.HTTP_200_OK
+    message = product.serialize()
 
-    location_url = url_for("put_products", product_id=product_id, _external=True)
+    location_url = url_for("update_products", product_id=product_id, _external=True)
 
     return jsonify(message), status_code, {"Location": location_url}
 

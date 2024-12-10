@@ -199,10 +199,11 @@ class TestProductRoutes(TestCase):
         """It should update a Product"""
         test_product = self._create_products()[0]
         request_url = f"{BASE_URL}/{test_product.id}"
+        logging.debug("Updating: %s", test_product.id)
         updated_product = test_product.serialize()
         new_description = "Updated description"
         updated_product["description"] = new_description
-        # logging.debug("Querying: %s", request_url)
+        logging.debug("Querying: %s", request_url)
         response = self.client.put(request_url, json=updated_product)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

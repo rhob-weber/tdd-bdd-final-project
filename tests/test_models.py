@@ -129,6 +129,7 @@ class TestProductModel(unittest.TestCase):
         product.create()
         self.assertIsNotNone(product.id)
         logger.info('Old product is: %s', json.dumps(product.serialize()))
+        product.description = "Updated description"
         product.update()
         products = Product.all()
         new_product = Product.find(product.id)

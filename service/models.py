@@ -102,9 +102,11 @@ class Product(db.Model):
         Updates a Product to the database
         """
         logger.info("Saving %s", self.name)
+        logger.info("Saving %s", self.description)
         if not self.id:
             raise DataValidationError("Update called with empty ID field")
         db.session.commit()
+        logger.info("Saved %s", self.id)
 
     def delete(self):
         """Removes a Product from the data store"""
