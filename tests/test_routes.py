@@ -28,6 +28,7 @@ import os
 import logging
 from decimal import Decimal
 from unittest import TestCase
+from urllib.parse import quote_plus
 from service import app
 from service.common import status
 from service.models import db, init_db, Product
@@ -288,6 +289,25 @@ class TestProductRoutes(TestCase):
             self.assertEqual(Decimal(got_product["price"]), test_product.price)
             self.assertEqual(got_product["available"], test_product.available)
             self.assertEqual(got_product["category"], test_product.category.name)
+
+    def test_find_by_name(self):
+        """It should find all products with this name"""
+        test_products = self._create_products(10)
+        self.assertEqual(len(test_products), 10)
+        search_name = test_products[0].name
+        request_url = f"{BASE_URL}?name={quote_plus(search_name)}"
+        logging.debug("Finding products by name")
+        num_expected = 0
+        for product in test_products:
+            if product.name == search_name:
+                num_expected += 1
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        got_products = response.get_json()
+        self.assertEqual(len(got_products), num_expected)
+        for got_product in got_products:
+            self.assertEqual(got_product["name"], search_name)
 
     ######################################################################
     # Utility functions

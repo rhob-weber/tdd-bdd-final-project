@@ -102,9 +102,13 @@ def list_products():
     List all Products
     This endpoint will get all Products
     """
-    app.logger.info("Request to Get all Products...")
+    app.logger.info("Request to Get Products...")
+    search_name = request.args.get("name")
+    if search_name is not None:
+        products = Product.find_by_name(search_name)
+    else:
+        products = Product.all()
 
-    products = Product.all()
     results = [product.serialize() for product in products]
 
     return results, status.HTTP_200_OK
