@@ -22,7 +22,7 @@ Test cases can be run with the following:
   codecov --token=$CODECOV_TOKEN
 
   While debugging just these tests it's convenient to use this:
-    nosetests --stop tests/test_service.py:TestProductService
+    nosetests --stop tests/test_routes.py:TestProductRoutes
 """
 import os
 import logging
@@ -166,13 +166,26 @@ class TestProductRoutes(TestCase):
     #
     # ADD YOUR TEST CASES HERE
     #
+    def test_get_product(self):
+        """It should read Product"""
+        test_product = self._create_products()[0]
+        request_url = f"{BASE_URL}/{test_product.id}"
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        got_product = response.get_json()
+        logging.debug("Product got: %s", got_product)
+        self.assertEqual(got_product["name"], test_product["name"])
+        self.assertEqual(got_product["description"], test_product["description"])
+        self.assertEqual(Decimal(got_product["price"]), test_product["price"])
+        self.assertEqual(got_product["available"], test_product["available"])
+        self.assertEqual(got_product["category"], test_product["category"])
 
     ######################################################################
     # Utility functions
     ######################################################################
 
     def get_product_count(self):
-        """save the current number of products"""
+        """get the current number of products"""
         response = self.client.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()

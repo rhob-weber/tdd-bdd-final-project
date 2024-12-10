@@ -89,8 +89,7 @@ def create_products():
     #
     # Uncomment this line of code once you implement READ A PRODUCT
     #
-    # location_url = url_for("get_products", product_id=product.id, _external=True)
-    location_url = "/"  # delete once READ is implemented
+    location_url = url_for("get_products", product_id=product.id, _external=True)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
@@ -105,10 +104,25 @@ def create_products():
 ######################################################################
 # R E A D   A   P R O D U C T
 ######################################################################
+@app.route("/products/<int:product_id>", methods=["GET"])
+def get_products(product_id):
+    """
+    Get a Product
+    This endpoint will get a Product with the requested id
+    """
+    app.logger.info("Request to Get a Product...")
 
-#
-# PLACE YOUR CODE HERE TO READ A PRODUCT
-#
+    app.logger.info("Processing: %s", product_id)
+    product = Product.find(product_id)
+    location_url = url_for("get_products", product_id=product.id, _external=True)
+    if not product == None:
+        status_code = status.HTTP_200_OK
+        message = {}
+    else:
+        status_code = status.HTTP_404_NOT_FOUND
+        message = product.serialize()
+
+    return jsonify(message), status_code, {"Location": location_url}
 
 ######################################################################
 # U P D A T E   A   P R O D U C T
