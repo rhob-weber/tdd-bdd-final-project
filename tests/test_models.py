@@ -43,6 +43,7 @@ logger = logging.getLogger("flask.app")
 ######################################################################
 
 
+# pylint: disable=too-many-public-methods
 class TestProductModel(unittest.TestCase):
     """Test Cases for Product Model"""
 
@@ -258,7 +259,7 @@ class TestProductModel(unittest.TestCase):
         self.assertIsNotNone(original_product.id)
         serialized_product = original_product.serialize()
         blank_product = Product()
-        deserialized_product = blank_product.deserialize( serialized_product )
+        deserialized_product = blank_product.deserialize(serialized_product)
         self.assertEqual(original_product.id, deserialized_product.id)
         self.assertEqual(original_product.name, deserialized_product.name)
         self.assertEqual(original_product.description, deserialized_product.description)
@@ -277,10 +278,9 @@ class TestProductModel(unittest.TestCase):
         try:
             product.id = None
             product.update()
-        except BaseException as err:
+        except DataValidationError as err:
             actual_err = err
         self.assertIsNotNone(actual_err)
-        self.assertTrue(isinstance(actual_err, DataValidationError))
         self.assertEqual(str(actual_err), "Update called with empty ID field")
 
     def test_deserialize_available_not_bool(self):
@@ -296,11 +296,10 @@ class TestProductModel(unittest.TestCase):
         blank_product = Product()
         actual_err = None
         try:
-            deserialized_product = blank_product.deserialize( serialized_product )
-        except BaseException as err:
+            blank_product.deserialize(serialized_product)
+        except DataValidationError as err:
             actual_err = err
         self.assertIsNotNone(actual_err)
-        self.assertTrue(isinstance(actual_err, DataValidationError))
         self.assertEqual(str(actual_err), "Invalid type for boolean [available]: <class 'str'>")
 
     def test_deserialize_category_not_valid(self):
@@ -316,11 +315,10 @@ class TestProductModel(unittest.TestCase):
         blank_product = Product()
         actual_err = None
         try:
-            deserialized_product = blank_product.deserialize( serialized_product )
-        except BaseException as err:
+            blank_product.deserialize(serialized_product)
+        except DataValidationError as err:
             actual_err = err
         self.assertIsNotNone(actual_err)
-        self.assertTrue(isinstance(actual_err, DataValidationError))
         self.assertEqual(str(actual_err), "Invalid attribute: Not a category I have heard of")
 
     def test_deserialize_empty_dictionary(self):
@@ -335,11 +333,10 @@ class TestProductModel(unittest.TestCase):
         blank_product = Product()
         actual_err = None
         try:
-            deserialized_product = blank_product.deserialize( serialized_product )
-        except BaseException as err:
+            blank_product.deserialize(serialized_product)
+        except DataValidationError as err:
             actual_err = err
         self.assertIsNotNone(actual_err)
-        self.assertTrue(isinstance(actual_err, DataValidationError))
         self.assertEqual(str(actual_err), "Invalid product: missing id")
 
     def test_deserialize_invalid_dictionary(self):
@@ -354,9 +351,9 @@ class TestProductModel(unittest.TestCase):
         blank_product = Product()
         actual_err = None
         try:
-            deserialized_product = blank_product.deserialize( serialized_product )
-        except BaseException as err:
+            blank_product.deserialize(serialized_product)
+        except DataValidationError as err:
             actual_err = err
         self.assertIsNotNone(actual_err)
-        self.assertTrue(isinstance(actual_err, DataValidationError))
-        self.assertEqual(str(actual_err), "Invalid product: body of request contained bad or no data string indices must be integers")
+        expected_message = "Invalid product: body of request contained bad or no data string indices must be integers"
+        self.assertEqual(str(actual_err), expected_message)
