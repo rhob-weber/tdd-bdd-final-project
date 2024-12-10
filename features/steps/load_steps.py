@@ -55,3 +55,72 @@ def step_impl(context):
         }
         response = self.client.post(rest_endpoint, json=payload)
         assert(response.status_code == status.HTTP_201_CREATED)
+
+@when(u'I press the "Create" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Create" button')
+
+
+@then(u'I should see the message "Success"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see the message "Success"')
+
+
+@when(u'I press the "Clear" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Clear" button')
+
+
+@when(u'I press the "Retrieve" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Retrieve" button')
+
+
+@when(u'I press the "Search" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Search" button')
+
+
+@when(u'I set the "Price" field to "69.98"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Price" field to "69.98"')
+
+
+@when(u'I press the "Update" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Update" button')
+
+
+@when(u'I press the "Delete" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Delete" button')
+
+
+@then(u'I should see the message "Failed"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see the message "Failed"')
+
+
+@then(u'I should see "Hat" in the results')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "Hat" in the results')
+
+
+@then(u'I should see "Shoes" in the results')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "Shoes" in the results')
+
+
+@then(u'I should see "Big Mac" in the results')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "Big Mac" in the results')
+
+
+@then(u'I should see "Sheets" in the results')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "Sheets" in the results')
+
+
+@when(u'I set the "Availability" dropdown to "False"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Availability" dropdown to "False"')
