@@ -266,11 +266,32 @@ class TestProductRoutes(TestCase):
         response = self.client.delete(request_url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-#
+    def test_list_all(self):
+        """It should list all products"""
+        test_products = self._create_products(5)
+        self.assertEqual(len(test_products), 5)
+        request_url = BASE_URL
+        logging.debug("Listing products")
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        got_products = response.get_json()
+        self.assertEqual(len(got_products), len(test_products))
+        for got_product in got_products:
+            test_product = None
+            for t_p in test_products:
+                if t_p.id == got_product["id"]:
+                    test_product = t_p
+            self.assertIsNotNone(test_product)
+            self.assertEqual(got_product["name"], test_product.name)
+            self.assertEqual(got_product["description"], test_product.description)
+            self.assertEqual(Decimal(got_product["price"]), test_product.price)
+            self.assertEqual(got_product["available"], test_product.available)
+            self.assertEqual(got_product["category"], test_product.category.name)
+
     ######################################################################
     # Utility functions
     ######################################################################
-
     def get_product_count(self):
         """get the current number of products"""
         response = self.client.get(BASE_URL)
