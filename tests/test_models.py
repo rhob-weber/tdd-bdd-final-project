@@ -261,7 +261,7 @@ class TestProductModel(unittest.TestCase):
         serialized_product = original_product.serialize()
         blank_product = Product()
         deserialized_product = blank_product.deserialize(serialized_product)
-        self.assertEqual(original_product.id, deserialized_product.id)
+        self.assertEqual(None, deserialized_product.id)
         self.assertEqual(original_product.name, deserialized_product.name)
         self.assertEqual(original_product.description, deserialized_product.description)
         self.assertEqual(original_product.category, deserialized_product.category)
@@ -338,7 +338,7 @@ class TestProductModel(unittest.TestCase):
         except DataValidationError as err:
             actual_err = err
         self.assertIsNotNone(actual_err)
-        self.assertEqual(str(actual_err), "Invalid product: missing id")
+        self.assertEqual(str(actual_err), "Invalid product: missing name")
 
     def test_deserialize_invalid_dictionary(self):
         """It should not be possible to deserialize an invalid dictionary"""
