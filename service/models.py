@@ -132,7 +132,7 @@ class Product(db.Model):
             data (dict): A dictionary containing the Product data
         """
         try:
-            self.id = data["id"]
+            #self.id = data["id"]
             self.name = data["name"]
             self.description = data["description"]
             self.price = Decimal(data["price"])

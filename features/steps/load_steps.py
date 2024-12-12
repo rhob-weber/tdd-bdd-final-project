@@ -23,6 +23,10 @@ For information on Waiting until elements are present in the HTML see:
 """
 import requests
 from behave import given
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 
 # HTTP Return Codes
 HTTP_200_OK = 200
@@ -59,7 +63,7 @@ def step_impl(context):
 @when(u'I press the "{button}" button')
 def step_impl(context, button):
     button_id = button.lower() + "-btn"
-    context.driver.find_by_id(button_id).click()
+    context.driver.find_element_by_id(button_id).click()
 
 @then('I should see the message "{message}"')
 def step_impl(context, message):
