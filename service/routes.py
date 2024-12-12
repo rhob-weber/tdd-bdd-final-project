@@ -173,6 +173,7 @@ def update_products(product_id):
     except DataValidationError as err:
         abort(status.HTTP_400_BAD_REQUEST, str(err))
 
+    product.id = product_id
     product.update()
     status_code = status.HTTP_200_OK
     message = product.serialize()

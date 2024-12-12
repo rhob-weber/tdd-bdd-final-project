@@ -101,6 +101,7 @@ class Product(db.Model):
         """
         Updates a Product to the database
         """
+        logger.info("Saving %s", str(self.id))
         logger.info("Saving %s", self.name)
         logger.info("Saving %s", self.description)
         if not self.id:
