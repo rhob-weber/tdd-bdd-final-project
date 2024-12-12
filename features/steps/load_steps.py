@@ -53,19 +53,13 @@ def step_impl(context):
             "category": row["category"],
             "available": row["available"] in ['True', 'true', '1'],
         }
-        response = self.client.post(rest_endpoint, json=payload)
-        assert(response.status_code == status.HTTP_201_CREATED)
+        context.resp = requests.post(rest_endpoint, json=payload)
+        assert(context.resp.status_code == HTTP_201_CREATED)
 
 @when(u'I press the "{button}" button')
 def step_impl(context, button):
     button_id = button.lower() + "-btn"
     context.driver.find_by_id(button_id).click()
-
-
-@when(u'I set the "Availability" dropdown to "False"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I set the "Availability" dropdown to "False"')
-
 
 @then('I should see the message "{message}"')
 def step_impl(context, message):

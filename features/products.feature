@@ -61,7 +61,7 @@ Scenario: Update a Product
     And I press the "Search" button
     Then I should see the message "Success"
     And I should see "A red fedora" in the "Description" field
-    When I change the "Name" to "Fedora"
+    When I change "Name" to "Fedora"
     And I press the "Update" button
     Then I should see the message "Success"
     When I copy the "Id" field
@@ -74,7 +74,7 @@ Scenario: Update a Product
     And I press the "Retrieve" button
     Then I should see the message "Success"
     And I should see "Fedora" in the results
-    And I should not see "Fedora" results
+    And I should not see "Fedora" in the results
 
 Scenario: Delete a Product
     When I visit the "Home Page"
@@ -102,23 +102,27 @@ Scenario: List all Products
     And I should see "Big Mac" in the results
     And I should see "Sheets" in the results
 
-Scenario: Search by Category
+Scenario: Search by category
     When I visit the "Home Page"
     And I press the "Clear" button
-    And I select "Cloths" in the "Category" dropdown
+    And I select "Food" in the "Category" dropdown
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Big Mac" in the results
+    And I should not see "Hat" in the results
+    And I should not see "Shoes" in the results
+    And I should not see "Sheets" in the results
+
+Scenario: Search by available
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I select "True" in the "Available" dropdown
     And I press the "Search" button
     Then I should see the message "Success"
     And I should see "Hat" in the results
-    And I should see "Shoes" in the results
-
-Scenario: Search by availability
-    When I visit the "Home Page"
-    And I press the "Clear" button
-    And I set the "Availability" dropdown to "False"
-    And I press the "Search" button
-    Then I should see the message "Success"
-    And I should see "Shoes" in the "Name" field
-    And I should see "Blue shoes" in the "Description" field
+    And I should see "Big Mac" in the results
+    And I should see "Sheets" in the results
+    And I should not see "Shoes" in the results
 
 Scenario: Search by name
     When I visit the "Home Page"
